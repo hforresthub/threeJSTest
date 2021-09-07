@@ -99,9 +99,9 @@ function animate() {
 	cube3.rotation.x += 0.01;
 	cube3.rotation.z += 0.04;
 	cube4.rotation.z += 0.06;
-	if (camera.position.z > 20) {
+	if (camera.position.z > 30) {
 		zDir = -0.01;
-	} else if (camera.position.z < 0) {
+	} else if (camera.position.z < 10) {
 		zDir = 0.01;
 	}
 	camera.position.z += zDir;
