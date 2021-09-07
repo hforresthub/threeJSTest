@@ -1,6 +1,6 @@
 // Find the latest version by visiting https://cdn.skypack.dev/three.
 
-import * as THREE from 'https://cdn.skypack.dev/pin/three@v0.132.2-1edwuDlviJO0abBvWgKd/mode=imports,min/optimized/three.js';
+// import * as THREE from 'https://cdn.skypack.dev/pin/three@v0.132.2-1edwuDlviJO0abBvWgKd/mode=imports,min/optimized/three.js';
 
 // import { OrbitControls } from 'https://cdn.skypack.dev/pin/three@v0.132.2-1edwuDlviJO0abBvWgKd/mode=imports,min/optimized/three.js/examples/jsm/controls/OrbitControls.js';
 
@@ -33,6 +33,49 @@ const line = new THREE.Line(geometry, material);
 scene.add(line);
 renderer.render(scene, camera);
 
+const color = 0xFFFFFF;
+const intensity = 1;
+const light = new THREE.AmbientLight(color, intensity);
+scene.add(light);
+
+let zDir = 0.01;
+
+const loader = new THREE.GLTFLoader();
+
+loader.load( './models/scene.gltf', function ( gltf ) {
+
+	
+	
+let sinX = 0;
+let xv = 0;
+	function pAnimate() {
+		requestAnimationFrame(animate);
+		renderer.render(scene, camera);
+		cube.rotation.x += 0.01;
+		cube.rotation.y += 0.02;
+		cube3.rotation.x += 0.01;
+		cube3.rotation.z += 0.04;
+		cube4.rotation.z += 0.06;
+		if (camera.position.z > 20) {
+			zDir = -0.01;
+		} else if (camera.position.z < 0) {
+			zDir = 0.01;
+		}
+		camera.position.z += zDir;
+		xv++;
+		sinX = Math.sin(xv);
+		gltf.scene.position.set(2 * xv, 0, 0);
+		scene.add( gltf.scene );
+	}
+	pAnimate();
+
+}, undefined, function ( error ) {
+
+	console.error( error );
+
+} );
+
+
 const geometry2 = new THREE.BoxGeometry();
 const material2 = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 const cube = new THREE.Mesh(geometry2, material2);
@@ -47,6 +90,7 @@ cube4.position.set(0, 10, -10);
 scene.add(cube4);
 
 camera.position.z = 10;
+
 function animate() {
 	requestAnimationFrame(animate);
 	renderer.render(scene, camera);
@@ -55,9 +99,14 @@ function animate() {
 	cube3.rotation.x += 0.01;
 	cube3.rotation.z += 0.04;
 	cube4.rotation.z += 0.06;
-	camera.position.z += 0.01;
+	if (camera.position.z > 20) {
+		zDir = -0.01;
+	} else if (camera.position.z < 0) {
+		zDir = 0.01;
+	}
+	camera.position.z += zDir;
 }
-animate();
+// animate();
 
 
 
