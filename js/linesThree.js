@@ -76,46 +76,83 @@ loader.load('./models/scene.gltf', function (gltf) {
 });
 
 let cubeArray = [];
+const arraySize = 40;
 
-function addCubes() {
-	for (let i = 0; i < 100; i++) {
+function addCubes(dimensions) {
+	for (let i = 0; i < dimensions; i++) {
 		let cubeSubArray = [];
 		cubeArray.push(cubeSubArray);
-		for (let j = 0; j < 100; j++) {
+		for (let j = 0; j < dimensions; j++) {
 
 			const geometryT = new THREE.BoxGeometry();
 			const materialT = new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x000101, roughness: 0.75, metalness: 0.95, vertexColors: true });
-			materialT.color.setRGB(i / 500, j / 500, (i + j) / 1000);
-			materialT.emissive.setRGB(i / 500, j / 500, (i + j) / 1000);
+			materialT.color.setRGB(i / (5 * dimensions), j / (5 * dimensions), (i + j) / (10 * dimensions));
+			// materialT.emissive.setRGB(i / (5 * dimensions), j / (5 * dimensions), (i + j) / (10 * dimensions));
 			const cubeT = new THREE.Mesh(geometryT, materialT);
 			cubeArray[i].push(cubeT);
-			cubeT.position.set(i, j, Math.sin(i+j+1) * 1.5);
+			cubeT.position.set(i, j, Math.sin(i + j + 1) * 1.5);
 			scene.add(cubeT);
 		}
 	}
 }
-addCubes();
+addCubes(arraySize);
 
-camera.position.x = 50;
-camera.position.y = 50;
-camera.position.z = 50;
+camera.position.x = arraySize / 2;
+camera.position.y = arraySize / 2;
+camera.position.z = arraySize;
+
+let redValue = 0;
+let greenValue = 0.33;
+let blueValue = 0.66;
+let redPulse = 0.01;
+let greenPulse = 0.01;
+let bluePulse = 0.01;
+
+const modifyCubes = function (element, i, element2, j) {
+	element2.rotation.z += 0.001 * i; 
+	element2.rotation.y += 0.001 * j; 
+	element2.position.set(i - 5, j - 5, Math.sin((i + j + 10) / 5) * 800 * zDir); 
+	element2.material.color.setRGB((i / arraySize + redValue) / 2, (j / arraySize + greenValue) / 2, ((i + j) / 2 * arraySize + blueValue) / 2);
+	element2.material.emissive.setRGB((i / arraySize + redValue) / 2, (j / arraySize + greenValue) / 2, ((i + j) / 2 * arraySize + blueValue) / 2);
+	// element2.material.emissive.setRGB(i / (5 * arraySize) * redValue, j / (5 * arraySize) * greenValue, (i + j) / (10 * arraySize) * blueValue);
+}
 
 function animate() {
 	requestAnimationFrame(animate);
 	renderer.render(scene, camera);
-	cubeArray.forEach((element, i) => element.forEach((element2, j) => {element2.rotation.z += 0.001 * i; element2.rotation.y += 0.001 * j; element2.position.set(i - 5, j - 5, Math.sin((i+j+10) / 5) * 800 * zDir);}));
-	if (camera.position.z > 100) {
+	cubeArray.forEach((element, i) => element.forEach((element2, j) => modifyCubes(element, i, element2, j)));
+	if (camera.position.z > arraySize * 2) {
 		zDir = -0.01;
-	} else if (camera.position.z < 40) {
+	} else if (camera.position.z < arraySize) {
 		zDir = 0.01;
-	}	
+	}
+	if (redValue > 1) {
+		redPulse = -0.01;
+	} else if (redValue < 0) {
+		redPulse = 0.01;
+	}
+	if (greenValue > 1) {
+		greenPulse = -0.01;
+	} else if (greenValue < 0) {
+		greenPulse = 0.01;
+	}
+	if (blueValue > 1) {
+		bluePulse = -0.01;
+	} else if (blueValue < 0) {
+		bluePulse = 0.01;
+	}
+	redValue += redPulse;
+	greenValue += greenPulse;
+	blueValue += bluePulse;
 
 	camera.position.z += zDir;
 }
 animate();
 
 
-
-
+// const sayName = function (name) {
+// 	alert(name);
+// }
+// sayName("Hal");
 
 
