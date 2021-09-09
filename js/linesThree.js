@@ -78,33 +78,35 @@ loader.load('./models/scene.gltf', function (gltf) {
 let cubeArray = [];
 
 function addCubes() {
-	for (let i = 0; i < 10; i++) {
+	for (let i = 0; i < 100; i++) {
 		let cubeSubArray = [];
 		cubeArray.push(cubeSubArray);
-		for (let j = 0; j < 10; j++) {
+		for (let j = 0; j < 100; j++) {
 
 			const geometryT = new THREE.BoxGeometry();
 			const materialT = new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x000101, roughness: 0.75, metalness: 0.95, vertexColors: true });
-			materialT.color.setRGB(i / 5, j / 5, (i + j) / 10);
-			materialT.emissive.setRGB(i / 5, j / 5, (i + j) / 10);
+			materialT.color.setRGB(i / 500, j / 500, (i + j) / 1000);
+			materialT.emissive.setRGB(i / 500, j / 500, (i + j) / 1000);
 			const cubeT = new THREE.Mesh(geometryT, materialT);
 			cubeArray[i].push(cubeT);
-			cubeT.position.set(i - 5, j - 5, Math.sin(i+j+1) * 1.5);
+			cubeT.position.set(i, j, Math.sin(i+j+1) * 1.5);
 			scene.add(cubeT);
 		}
 	}
 }
 addCubes();
 
-camera.position.z = 10;
+camera.position.x = 50;
+camera.position.y = 50;
+camera.position.z = 50;
 
 function animate() {
 	requestAnimationFrame(animate);
 	renderer.render(scene, camera);
 	cubeArray.forEach((element, i) => element.forEach((element2, j) => {element2.rotation.z += 0.001 * i; element2.rotation.y += 0.001 * j; element2.position.set(i - 5, j - 5, Math.sin((i+j+10) / 5) * 800 * zDir);}));
-	if (camera.position.z > 30) {
+	if (camera.position.z > 100) {
 		zDir = -0.01;
-	} else if (camera.position.z < 10) {
+	} else if (camera.position.z < 40) {
 		zDir = 0.01;
 	}	
 
