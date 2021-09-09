@@ -76,7 +76,7 @@ loader.load('./models/scene.gltf', function (gltf) {
 });
 
 let cubeArray = [];
-const arraySize = 40;
+const arraySize = 60;
 
 function addCubes(dimensions) {
 	for (let i = 0; i < dimensions; i++) {
@@ -84,7 +84,7 @@ function addCubes(dimensions) {
 		cubeArray.push(cubeSubArray);
 		for (let j = 0; j < dimensions; j++) {
 
-			const geometryT = new THREE.BoxGeometry();
+			const geometryT = new THREE.BoxGeometry(0.075, 1.75, 0.75);
 			const materialT = new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x000101, roughness: 0.75, metalness: 0.95, vertexColors: true });
 			materialT.color.setRGB(i / (5 * dimensions), j / (5 * dimensions), (i + j) / (10 * dimensions));
 			// materialT.emissive.setRGB(i / (5 * dimensions), j / (5 * dimensions), (i + j) / (10 * dimensions));
@@ -99,7 +99,7 @@ addCubes(arraySize);
 
 camera.position.x = arraySize / 2;
 camera.position.y = arraySize / 2;
-camera.position.z = arraySize;
+camera.position.z = arraySize / 2;
 
 let redValue = 0;
 let greenValue = 0.33;
@@ -107,11 +107,16 @@ let blueValue = 0.66;
 let redPulse = 0.01;
 let greenPulse = 0.01;
 let bluePulse = 0.01;
+zDir = -0.01 * arraySize;
+
+const decimalWrap = (decimalNum) => {
+	return ((decimalNum * 100) % 100) / 100;
+}
 
 const modifyCubes = function (element, i, element2, j) {
 	element2.rotation.z += 0.001 * i; 
 	element2.rotation.y += 0.001 * j; 
-	element2.position.set(i - 5, j - 5, Math.sin((i + j + 10) / 5) * 800 * zDir); 
+	element2.position.set(i, j, Math.sin((i + j + 10) / 5) * 8); 
 	element2.material.color.setRGB((i / arraySize + redValue) / 2, (j / arraySize + greenValue) / 2, ((i + j) / 2 * arraySize + blueValue) / 2);
 	element2.material.emissive.setRGB((i / arraySize + redValue) / 2, (j / arraySize + greenValue) / 2, ((i + j) / 2 * arraySize + blueValue) / 2);
 	// element2.material.emissive.setRGB(i / (5 * arraySize) * redValue, j / (5 * arraySize) * greenValue, (i + j) / (10 * arraySize) * blueValue);
@@ -121,10 +126,10 @@ function animate() {
 	requestAnimationFrame(animate);
 	renderer.render(scene, camera);
 	cubeArray.forEach((element, i) => element.forEach((element2, j) => modifyCubes(element, i, element2, j)));
-	if (camera.position.z > arraySize * 2) {
-		zDir = -0.01;
-	} else if (camera.position.z < arraySize) {
-		zDir = 0.01;
+	if (camera.position.z > arraySize) {
+		zDir = -0.001 * arraySize;
+	} else if (camera.position.z < arraySize / 2) {
+		zDir = 0.001 * arraySize;
 	}
 	if (redValue > 1) {
 		redPulse = -0.01;
