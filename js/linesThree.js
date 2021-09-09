@@ -35,19 +35,19 @@ renderer.render(scene, camera);
 
 const color = 0xFFFFFF;
 const intensity = 1;
-const light = new THREE.AmbientLight(color, intensity);
+const light = new THREE.DirectionalLight(color, intensity);
 scene.add(light);
 
 let zDir = 0.01;
 
 const loader = new THREE.GLTFLoader();
 
-loader.load( './models/scene.gltf', function ( gltf ) {
+loader.load('./models/scene.gltf', function (gltf) {
 
-	
-	
-let sinX = 0;
-let xv = 0;
+
+
+	let sinX = 0;
+	let xv = 0;
 	function pAnimate() {
 		requestAnimationFrame(animate);
 		renderer.render(scene, camera);
@@ -65,40 +65,43 @@ let xv = 0;
 		xv++;
 		sinX = Math.sin(xv);
 		gltf.scene.position.set(2 * xv, 0, 0);
-		scene.add( gltf.scene );
+		scene.add(gltf.scene);
 	}
-	pAnimate();
+	//pAnimate();
 
-}, undefined, function ( error ) {
+}, undefined, function (error) {
 
-	console.error( error );
+	console.error(error);
 
-} );
+});
 
+let cubeArray = [];
 
-const geometry2 = new THREE.BoxGeometry();
-const material2 = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry2, material2);
-scene.add(cube);
-const geometry3 = new THREE.BoxGeometry();
-const material3 = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-const cube3 = new THREE.Mesh(geometry3, material3);
-cube3.position.set(0, -10, -10);
-scene.add(cube3);
-const cube4 = new THREE.Mesh(geometry3, material3);
-cube4.position.set(0, 10, -10);
-scene.add(cube4);
+function addCubes() {
+	for (let i = 0; i < 10; i++) {
+		let cubeSubArray = [];
+		cubeArray.push(cubeSubArray);
+		for (let j = 0; j < 10; j++) {
+
+			const geometryT = new THREE.BoxGeometry();
+			const materialT = new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x000101, roughness: 0.75, metalness: 0.95, vertexColors: true });
+			materialT.color.setRGB(i / 5, j / 5, (i + j) / 10);
+			materialT.emissive.setRGB(i / 5, j / 5, (i + j) / 10);
+			const cubeT = new THREE.Mesh(geometryT, materialT);
+			cubeArray[i].push(cubeT);
+			cubeT.position.set(i - 5, j - 5, Math.sin(i+j+1));
+			scene.add(cubeT);
+		}
+	}
+}
+addCubes();
 
 camera.position.z = 10;
 
 function animate() {
 	requestAnimationFrame(animate);
 	renderer.render(scene, camera);
-	cube.rotation.x += 0.01;
-	cube.rotation.y += 0.02;
-	cube3.rotation.x += 0.01;
-	cube3.rotation.z += 0.04;
-	cube4.rotation.z += 0.06;
+	cubeArray.forEach((element, index) => element.forEach((element2, index2) => {element2.rotation.z += 0.001 * index; element2.rotation.y += 0.001 * index2;}));
 	if (camera.position.z > 30) {
 		zDir = -0.01;
 	} else if (camera.position.z < 10) {
@@ -106,7 +109,7 @@ function animate() {
 	}
 	camera.position.z += zDir;
 }
-// animate();
+animate();
 
 
 
