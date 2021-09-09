@@ -19,18 +19,18 @@ const scene = new THREE.Scene();
 //create a blue LineBasicMaterial
 const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
 
-const points = [];
-points.push(new THREE.Vector3(- 10, 0, 0));
-points.push(new THREE.Vector3(0, 10, 0));
-points.push(new THREE.Vector3(10, 0, 0));
-points.push(new THREE.Vector3(0, -10, 0));
-points.push(new THREE.Vector3(-10, 0, 0));
+// const points = [];
+// points.push(new THREE.Vector3(- 10, 0, 0));
+// points.push(new THREE.Vector3(0, 10, 0));
+// points.push(new THREE.Vector3(10, 0, 0));
+// points.push(new THREE.Vector3(0, -10, 0));
+// points.push(new THREE.Vector3(-10, 0, 0));
 
-const geometry = new THREE.BufferGeometry().setFromPoints(points);
+// const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
-const line = new THREE.Line(geometry, material);
+// const line = new THREE.Line(geometry, material);
 
-scene.add(line);
+// scene.add(line);
 renderer.render(scene, camera);
 
 const color = 0xFFFFFF;
@@ -89,7 +89,7 @@ function addCubes() {
 			materialT.emissive.setRGB(i / 5, j / 5, (i + j) / 10);
 			const cubeT = new THREE.Mesh(geometryT, materialT);
 			cubeArray[i].push(cubeT);
-			cubeT.position.set(i - 5, j - 5, Math.sin(i+j+1));
+			cubeT.position.set(i - 5, j - 5, Math.sin(i+j+1) * 1.5);
 			scene.add(cubeT);
 		}
 	}
@@ -101,12 +101,13 @@ camera.position.z = 10;
 function animate() {
 	requestAnimationFrame(animate);
 	renderer.render(scene, camera);
-	cubeArray.forEach((element, index) => element.forEach((element2, index2) => {element2.rotation.z += 0.001 * index; element2.rotation.y += 0.001 * index2;}));
+	cubeArray.forEach((element, i) => element.forEach((element2, j) => {element2.rotation.z += 0.001 * i; element2.rotation.y += 0.001 * j; element2.position.set(i - 5, j - 5, Math.sin((i+j+10) / 5) * 800 * zDir);}));
 	if (camera.position.z > 30) {
 		zDir = -0.01;
 	} else if (camera.position.z < 10) {
 		zDir = 0.01;
-	}
+	}	
+
 	camera.position.z += zDir;
 }
 animate();
